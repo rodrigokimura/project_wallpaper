@@ -1,28 +1,6 @@
-import random
-from typing import List, NamedTuple, Tuple
+from typing import List, NamedTuple
 
-
-class Size(NamedTuple):
-    width: int
-    height: int
-
-
-class Resolution(NamedTuple):
-    x: int
-    y: int
-
-
-class Point:
-    x: int
-    y: int
-
-    def __init__(self, x: int, y: int):
-        self.x = x
-        self.y = y
-
-    def distort(self, x_range: Tuple[int, int], y_range: Tuple[int, int]):
-        self.x = self.x + random.randint(*x_range)
-        self.y = self.y + random.randint(*y_range)
+from commons import Point, Resolution, Size
 
 
 class Tetragon(NamedTuple):
@@ -33,6 +11,11 @@ class Tetragon(NamedTuple):
 
     def as_primitives(self):
         return [(p.x, p.y) for p in self]
+
+    def centroid(self):
+        x = int(sum(p.x for p in self) / 4)
+        y = int(sum(p.y for p in self) / 4)
+        return Point(x, y)
 
 
 class TetragonMesh:

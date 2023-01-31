@@ -5,8 +5,8 @@ name = "pypi"
 
 [packages]
 pillow = "*"
+scikit-spatial = "*"
 
 [dev-packages]
 black = "*"
 isort = "*"
-

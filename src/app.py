@@ -1,20 +1,19 @@
+import sys
+
 from PIL import Image, ImageDraw
 
-from color import get_random_color, Color, get_color_matrix
+from color import Color, LineGradient
+from commons import Point
 from mesh import Resolution, Size, TetragonMesh
 
 
 def main():
-    resolution = Resolution(32, 18)
+    resolution = Resolution(16, 9)
     size = Size(1920, 1080)
     mesh = TetragonMesh(size, resolution)
-    colors = [
-        Color(255, 0, 0),
-        Color(0, 0, 255),
-        Color(255, 0, 255),
-        Color(0, 0, 0),
-    ]
-    matrix = get_color_matrix(colors, resolution)
+    gradient = LineGradient.from_slope(
+        Point(0, 0), 30, 2000, (Color(168, 233, 32), Color(107, 35, 156))
+    )
 
     image = Image.new("RGB", size)
     drawing = ImageDraw.Draw(image)
@@ -22,10 +21,13 @@ def main():
     for x in range(resolution.x):
         for y in range(resolution.y):
             tetragon = mesh.get_tetragon(x, y)
-            if tetragon:
-                drawing.polygon(tetragon.as_primitives(), fill=matrix[x][y])
+            color = gradient.get_color(tetragon.centroid())
+            drawing.polygon(tetragon.as_primitives(), fill=color)
 
-    image.save("test.png")
+    if len(sys.argv) > 1:
+        image.save(sys.argv[1])
+    else:
+        image.show()
 
 
 if __name__ == "__main__":
