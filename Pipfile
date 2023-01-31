@@ -6,6 +6,8 @@ name = "pypi"
 [packages]
 pillow = "*"
 scikit-spatial = "*"
+typer = "*"
+rich = "*"
 
 [dev-packages]
 black = "*"

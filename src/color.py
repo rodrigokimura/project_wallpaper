@@ -10,6 +10,11 @@ class Color(NamedTuple):
     g: int
     b: int
 
+    @staticmethod
+    def from_hex(hex: str):
+        hex = hex.lstrip("#")
+        return Color(*tuple(int(hex[i : i + 2], 16) for i in (0, 2, 4)))
+
 
 get_random_color = lambda: Color(
     random.randint(0, 255),

@@ -20,9 +20,10 @@ class Tetragon(NamedTuple):
 
 class TetragonMesh:
     size: Size
-    tetragons: List[List[Tetragon]]
+    _tetragons: List[List[Tetragon]]
 
     def __init__(self, size: Size, resolution: Resolution, distortion: float = 0.2):
+        self.resolution = resolution
         width = int(size.width / resolution.x)
         height = int(size.height / resolution.y)
         _points = [
@@ -33,7 +34,7 @@ class TetragonMesh:
         distortion_range_x = (-int(width * distortion), int(width * distortion))
         distortion_range_y = (-int(height * distortion), int(height * distortion))
 
-        self.tetragons = []
+        self._tetragons = []
         for col in range(resolution.x):
             tetragon_row = []
             for row in range(resolution.y):
@@ -50,10 +51,10 @@ class TetragonMesh:
                 if row != resolution.y - 1 and col != 0:
                     d.distort(distortion_range_x, distortion_range_y)
                 tetragon_row.append(Tetragon(a, b, c, d))
-            self.tetragons.append(tetragon_row)
+            self._tetragons.append(tetragon_row)
 
-    def get_tetragon(self, x: int, y: int):
-        try:
-            return self.tetragons[x][y]
-        except IndexError:
-            return None
+    @property
+    def tetragons(self):
+        for x in range(self.resolution.x):
+            for y in range(self.resolution.y):
+                yield self._tetragons[x][y]
