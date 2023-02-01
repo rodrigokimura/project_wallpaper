@@ -4,5 +4,4 @@
 *.pyc
 *.pem
 *.log
-*.png
 .pytest_cache/

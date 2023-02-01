@@ -1,5 +1,4 @@
-import sys
-from typing import Tuple
+from typing import List, Tuple
 
 import typer
 from PIL import Image, ImageDraw
@@ -10,23 +9,23 @@ from mesh import Resolution, Size, TetragonMesh
 
 
 def main(
-    filename: str = typer.Argument(...),
-    resolution: Tuple[int, int] = typer.Option((16, 9)),
+    filename: str = typer.Argument(..., help="Output filename"),
+    colors: List[str] = typer.Argument(..., help="List of hex colors"),
+    polygons: Tuple[int, int] = typer.Option((16, 9)),
     size: Tuple[int, int] = typer.Option((1920, 1080)),
     start: Tuple[int, int] = typer.Option((0, 0)),
     end: Tuple[int, int] = typer.Option((1920, 1080)),
-    colors: Tuple[str, str] = typer.Option(("#a8df20", "#733b8c")),
 ):
     """
     Simple wallpaper generator.
     """
-    resolution = Resolution(*resolution)
+    polygons = Resolution(*polygons)
     size = Size(*size)
-    mesh = TetragonMesh(size, resolution)
+    mesh = TetragonMesh(size, polygons)
     gradient = LineGradient.from_points(
         Point(*start),
         Point(*end),
-        (Color.from_hex(colors[0]), Color.from_hex(colors[1])),
+        tuple(Color.from_hex(color) for color in colors),
     )
 
     image = Image.new("RGB", size)

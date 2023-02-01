@@ -31,6 +31,17 @@ def normalize_channel(n: int):
     return n
 
 
+def get_color_from_relative_distance_multiple(colors: Tuple[Color, ...], d: float):
+    if not colors:
+        return None
+    distance_between_colors = 1 / (len(colors) - 1)
+    first_color_index = int(d / distance_between_colors)
+    first_color = colors[first_color_index]
+    second_color = colors[first_color_index + 1]
+    d = (d % distance_between_colors) / distance_between_colors
+    return get_color_from_relative_distance(first_color, second_color, d)
+
+
 def get_color_from_relative_distance(start: Color, end: Color, d: float):
     """
     d == 0 -> closest to start
@@ -64,22 +75,18 @@ class Gradient(ABC):
 class LineGradient:
     start: Point
     end: Point
-    start_color: Color
-    end_color: Color
+    colors: Tuple[Color, ...]
 
     @staticmethod
-    def from_points(start: Point, end: Point, colors: Tuple[Color, Color]):
+    def from_points(start: Point, end: Point, colors: Tuple[Color, ...]):
         gradient = LineGradient()
         gradient.start = start
         gradient.end = end
-        gradient.start_color = colors[0]
-        gradient.end_color = colors[1]
+        gradient.colors = colors
         return gradient
 
     @staticmethod
-    def from_slope(
-        start: Point, slope: float, length: int, colors: Tuple[Color, Color]
-    ):
+    def from_slope(start: Point, slope: float, length: int, colors: Tuple[Color, ...]):
         import math
 
         slope = slope * math.pi / 180
@@ -89,8 +96,7 @@ class LineGradient:
         gradient.end = Point(
             length * math.sin(slope) + start.x, length * math.cos(slope) + start.y
         )
-        gradient.start_color = colors[0]
-        gradient.end_color = colors[1]
+        gradient.colors = colors
         return gradient
 
     def get_color(self, point: Point):
@@ -105,6 +111,6 @@ class LineGradient:
         total_distance = _Point(self.start.as_tuple()).distance_point(
             self.end.as_tuple()
         )
-        return get_color_from_relative_distance(
-            self.start_color, self.end_color, distance_from_start / total_distance
+        return get_color_from_relative_distance_multiple(
+            self.colors, distance_from_start / total_distance
         )

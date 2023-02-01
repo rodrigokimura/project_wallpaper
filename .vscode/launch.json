@@ -9,6 +9,7 @@
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/src/app.py",
+            "args": ["test.png"],
             "console": "integratedTerminal",
             "justMyCode": true
         }
