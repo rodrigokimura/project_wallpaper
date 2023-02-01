@@ -2,8 +2,8 @@
 
 ## Summary
 
-Simple wallpaper generator.
-Inspired by (this project)[https://github.com/timozattol/wallpaper-generator]
+Simple wallpaper generator.  
+Inspired by [this project](https://github.com/timozattol/wallpaper-generator)
 
 ## Usage
 
