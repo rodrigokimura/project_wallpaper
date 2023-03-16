@@ -16,11 +16,12 @@ class Color(NamedTuple):
         return Color(*tuple(int(hex[i : i + 2], 16) for i in (0, 2, 4)))
 
 
-get_random_color = lambda: Color(
-    random.randint(0, 255),
-    random.randint(0, 255),
-    random.randint(0, 255),
-)
+def get_random_color():
+    return Color(
+        random.randint(0, 255),
+        random.randint(0, 255),
+        random.randint(0, 255),
+    )
 
 
 def normalize_channel(n: int):
@@ -68,11 +69,11 @@ def get_color_matrix(colors, resolution):
 
 class Gradient(ABC):
     @abstractmethod
-    def get(self, point: Point):
+    def get_color(self, point: Point):
         pass
 
 
-class LineGradient:
+class LineGradient(Gradient):
     start: Point
     end: Point
     colors: Tuple[Color, ...]
@@ -94,7 +95,8 @@ class LineGradient:
         gradient = LineGradient()
         gradient.start = start
         gradient.end = Point(
-            length * math.sin(slope) + start.x, length * math.cos(slope) + start.y
+            int(length * math.sin(slope)) + start.x,
+            int(length * math.cos(slope)) + start.y,
         )
         gradient.colors = colors
         return gradient
@@ -112,5 +114,22 @@ class LineGradient:
             self.end.as_tuple()
         )
         return get_color_from_relative_distance_multiple(
-            self.colors, distance_from_start / total_distance
+            self.colors, float(distance_from_start / total_distance)
+        )
+
+
+class RadialGradient(Gradient):
+    def __init__(self, center: Point, radius: int, colors: Tuple[Color, ...]) -> None:
+        self.center = center
+        self.radius = radius
+        self.colors = colors
+
+    def get_color(self, point: Point):
+        from skspatial.objects import Point as _Point
+
+        distance_from_center = _Point(self.center.as_tuple()).distance_point(
+            point.as_tuple()
+        )
+        return get_color_from_relative_distance_multiple(
+            self.colors, float(distance_from_center / self.radius)
         )
